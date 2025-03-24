@@ -1,5 +1,5 @@
 #parent of the official image
-FROM python:3.9
+FROM python:3.11.10 anaconda
 
 #working directory
 WORKDIR  /python-app
