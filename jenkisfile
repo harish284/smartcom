@@ -1,11 +1,59 @@
-pipeline{
-  agent{
-     environment{
-            Docker image=harish2810/first-repo:v1
-         }
+pipeline {
+    agent any
+
+    environment {
+        Docker_image = 'harish2810/first-repo:v1'
     }
 
-stages{
-    stage("check-out"){
-      steps{
-             git- branch "main" url "
+    stages {
+        stage('Check-out') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Savitor03/smartcom.git'
+            }
+        }
+
+        stage('SonarQube Code Analysis') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
+                        sh '''
+                        sonar-scanner \
+                        -Dsonar.projectKey=python-app \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=http://34.201.116.83:9000 \
+                        -Dsonar.login=$SONAR_AUTH_TOKEN
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t $Docker_image ."
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push $Docker_image
+                        '''
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully'
+        }
+        failure {
+            echo 'Pipeline failed'
+        }
+    }
+}
