@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Check-out') {
             steps {
-                git branch: 'main', url: 'https://github.com/Savitor03/smartcom.git'
+                git branch: 'main', url: 'https://github.com/harish284/smartcom.git'
             }
         }
 
