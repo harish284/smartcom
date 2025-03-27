@@ -5,3 +5,4 @@ transformers
 autopep8
 pylint
 streamlit
+Flask-Cors
