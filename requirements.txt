@@ -1,5 +1,3 @@
 Flask
 requests
-transformers
-pylint
 streamlit
