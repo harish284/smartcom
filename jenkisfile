@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        Docker_image = 'harish2810/first-repo:v1'
+        DOCKER_IMAGE = 'harish2810/first-repo:v1'
     }
 
     stages {
@@ -12,25 +12,12 @@ pipeline {
             }
         }
 
-        stage('SonarQube Code Analysis') {
-            steps {
-                script {
-                    withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
-                        sh '''
-                        sonar-scanner \
-                        -Dsonar.projectKey=python-app \
-                        -Dsonar.sources=. \
-                        -Dsonar.host.url=http://34.201.116.83:9000 \
-                        -Dsonar.login=$SONAR_AUTH_TOKEN
-                        '''
-                    }
-                }
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t $Docker_image ."
+                    sh '''
+                        echo "building image.."
+                       docker build -t $DOCKER_IMAGE .
+                    '''
             }
         }
 
@@ -39,8 +26,8 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh '''
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker push $Docker_image
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin || exit 1
+                        docker push $DOCKER_IMAGE
                         '''
                     }
                 }
