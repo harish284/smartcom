@@ -16,7 +16,7 @@ pipeline {
             steps {
                     sh '''
                         echo "building image.."
-                       docker build -t $DOCKER_IMAGE .
+                       docker build -f python.Dockerfile -t $DOCKER_IMAGE .
                     '''
             }
         }
