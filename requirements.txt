@@ -5,4 +5,3 @@ transformers
 autopep8
 pylint
 streamlit
-pandas
