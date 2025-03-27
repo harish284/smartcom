@@ -1,7 +1,5 @@
 Flask
 requests
-google-generativeai
 transformers
-autopep8
 pylint
 streamlit
